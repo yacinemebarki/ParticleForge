@@ -1,6 +1,3 @@
 #include <iostream>
+#include "vectore2.hpp"
 
-class vector2{
-    public: float x;
-    public: float y;
-};
