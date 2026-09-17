@@ -65,6 +65,7 @@ struct PhysicSetting{
 };
 
 struct PhysicPanel{
+    sf::Text title;
     PhysicSetting gravity;
     PhysicSetting wind;
     PhysicSetting weight;
@@ -83,8 +84,8 @@ void setupPhysicSetting(PhysicSetting& setting, sf::Font& font, std::string labe
 
     setting.knob.setRadius(8);
     setting.knob.setFillColor(sf::Color::White);
-    float ration = (value - min_value) / (value - max_value);
-    setting.bar.setPosition(postion.x + ration * 250 - 8, postion.y - 5);
+    float ration = (value - min_value) / (max_value - min_value);
+    setting.knob.setPosition(postion.x + ration * 250 - 8, postion.y - 5);
 
     setupText(setting.label, font, label, sf::Color:: White);
     setting.label.setCharacterSize(16);
@@ -92,10 +93,39 @@ void setupPhysicSetting(PhysicSetting& setting, sf::Font& font, std::string labe
 
 }
 
+void drawPhysicSetting(sf::RenderWindow& window, const PhysicSetting& setting){
+    window.draw(setting.label);
+    window.draw(setting.bar);
+    window.draw(setting.knob);
+}
+
 void setupPhysicPanel(PhysicPanel& panel, sf::Font& font){
-    const float min_Panelx = 850;  
-    
-    
+    const float min_Panel_x = 850;
+    const float min_Panel_y = 80;
+    const float bar_gap = 40;
+    const float bar_x = 900;
+    float current_y = 120;
+
+    //title
+    setupText(panel.title, font, "physic settings", sf::Color::Red);
+    panel.title.setPosition(min_Panel_x, min_Panel_y);
+    current_y += bar_gap;
+
+    sf::Vector2f postion(bar_x, current_y);
+    setupPhysicSetting(panel.gravity, font, "gravity", 0, 30, 9.8, postion);
+    postion.y += bar_gap;
+
+    setupPhysicSetting(panel.wind, font, "wind", -30, 30, 0, postion);
+    postion.y += bar_gap;
+
+    setupPhysicSetting(panel.weight, font, "weight", 0, 1000, 20, postion);
+    postion.y += bar_gap;
+
+    setupPhysicSetting(panel.friction, font, "friction", 0, 1, 0.3, postion);
+    postion.y += bar_gap;
+
+    setupPhysicSetting(panel.restitution, font, "restitution", 0, 1, 0.7, postion);
+
 }
 
 void OpenApp(){
@@ -106,13 +136,25 @@ void OpenApp(){
     font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
     setupIntroPanel(intro, font);
 
+    PhysicPanel Physical;
+    setupPhysicPanel(Physical, font);
+
     while (window.isOpen()){
         window.clear();
+
         window.draw(intro.title);
         window.draw(intro.pauseButton);
         window.draw(intro.pauseText);
         window.draw(intro.restartButton);
         window.draw(intro.restartText);
+
+        window.draw(Physical.title);
+        drawPhysicSetting(window, Physical.gravity);
+        drawPhysicSetting(window, Physical.wind);
+        drawPhysicSetting(window, Physical.weight);
+        drawPhysicSetting(window, Physical.friction);
+        drawPhysicSetting(window, Physical.restitution);
+
         window.display();
     }
     
