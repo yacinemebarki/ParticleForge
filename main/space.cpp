@@ -55,6 +55,49 @@ void setupIntroPanel(IntroPanel& panel, sf::Font &font){
     panel.pauseText.setPosition(990.f, panelY + 6.f);
 }
 
+struct PhysicSetting{
+    sf::Text label;
+    sf::RectangleShape bar;
+    sf::CircleShape knob;
+    float min_value;
+    float max_value;
+    float value;
+};
+
+struct PhysicPanel{
+    PhysicSetting gravity;
+    PhysicSetting wind;
+    PhysicSetting weight;
+    PhysicSetting restitution;
+    PhysicSetting friction;
+};
+
+void setupPhysicSetting(PhysicSetting& setting, sf::Font& font, std::string label, float min_value, float max_value, float value,sf::Vector2f postion){
+    setting.min_value = min_value;
+    setting.max_value = max_value;
+    setting.value = value;
+
+    setting.bar.setSize(sf::Vector2f(250, 6));
+    setting.bar.setFillColor(sf::Color::White);
+    setting.bar.setPosition(postion);
+
+    setting.knob.setRadius(8);
+    setting.knob.setFillColor(sf::Color::White);
+    float ration = (value - min_value) / (value - max_value);
+    setting.bar.setPosition(postion.x + ration * 250 - 8, postion.y - 5);
+
+    setupText(setting.label, font, label, sf::Color:: White);
+    setting.label.setCharacterSize(16);
+    setting.label.setPosition(postion.x, postion.y - 30);
+
+}
+
+void setupPhysicPanel(PhysicPanel& panel, sf::Font& font){
+    const float min_Panelx = 850;  
+    
+    
+}
+
 void OpenApp(){
     sf::RenderWindow window(sf::VideoMode(1280, 730), "tiny_physic");
 
