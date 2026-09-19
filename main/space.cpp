@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include <istream>
+#include <iostream>
 
 #include <string>
 
@@ -126,6 +126,32 @@ void setupPhysicPanel(PhysicPanel& panel, sf::Font& font){
 
     setupPhysicSetting(panel.restitution, font, "restitution", 0, 1, 0.7, postion);
 
+}
+
+void handlIntroEvent(sf::Event &event, IntroPanel &intro){
+    if(event.type == sf::Event::MouseButtonPressed){
+        sf::Vector2f mouse(event.mouseButton.x, event.mouseButton.y);
+        if(intro.restartButton.getGlobalBounds().contains(mouse)){
+            std::cout <<"restart pressed";
+        }
+        if(intro.pauseButton.getGlobalBounds().contains(mouse)){
+            std::cout <<"pause pressed";
+        }
+    }
+}
+
+void handelSettingEvent(sf::Event &event, PhysicPanel &physic);
+
+void handelEvent(sf::RenderWindow &window, IntroPanel &intro, PhysicPanel &physic){
+    sf::Event event;
+
+    while(window.pollEvent(event)){
+        if(event.type == sf::Event::Closed){
+            window.close();
+        }
+        handlIntroEvent(event, intro);
+        handelSettingEvent(event, physic);
+    }
 }
 
 void OpenApp(){
