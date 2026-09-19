@@ -3,19 +3,18 @@
 #include <SFML/Graphics.hpp>
 #include "element.hpp"
 
-class envirnement{
+class environment{
     public: float gravity;
     public: float wind;
     public: float friction;
-    std::vector<element> elements;
+    public: element el;
 
-    envirnement(float gravity, float wind, float friction);
+    environment(float gravity, float wind, float friction, element el);
 
     void set_gravity(float gravity);
     void set_wind(float wind);
     void set_friction(float friction);
 
-    void add_element(element el);
     void applyGravity(element el);
     void applyWind(element el);
 };

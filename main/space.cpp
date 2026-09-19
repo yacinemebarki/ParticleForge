@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
+#include "../include/element.hpp"
+#include "../include/environment.hpp"
 
 std::string background_image = "../../image/backgroudn.avif";
 
@@ -207,6 +209,16 @@ void handelEvent(sf::RenderWindow &window, IntroPanel &intro, PhysicPanel &physi
         handlIntroEvent(event, intro);
         handelSettingEvent(event, physic);
     }
+}
+
+void physicLogic(IntroPanel &intro, PhysicPanel &physic, environment &env){
+    env.el.set_restitution(physic.restitution.value);
+    env.el.set_weight(physic.weight.value);
+    env.set_wind(physic.wind.value);
+    env.set_gravity(physic.gravity.value);
+    env.set_friction(physic.friction.value);
+
+    
 }
 
 void OpenApp(){
