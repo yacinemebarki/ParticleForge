@@ -1,6 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
 #include <string>
 
 std::string background_image = "../../image/backgroudn.avif";
@@ -140,7 +139,63 @@ void handlIntroEvent(sf::Event &event, IntroPanel &intro){
     }
 }
 
-void handelSettingEvent(sf::Event &event, PhysicPanel &physic);
+void updatePhysicSetting(PhysicSetting &setting, float mouseX){
+    float barx = setting.bar.getPosition().x;
+    float barWidth = setting.bar.getSize().x;
+
+    float ratio = (mouseX - barx) / barWidth;
+    if(ratio < 0){
+        ratio = 0;
+    }
+    else if(ratio > 1){
+        ratio = 1;
+    }
+
+    setting.value = setting.min_value + ratio * (setting.max_value - setting.min_value);
+    std::cout <<setting.value;
+
+    setting.knob.setPosition(barx + ratio * barWidth -setting.knob.getRadius(), setting.bar.getPosition().y - 5);
+}
+
+bool isMouseOverSetting(PhysicSetting &setting, sf::Vector2f mouse){
+    sf::FloatRect area = setting.bar.getGlobalBounds();
+
+    area.top -= 10;
+    area.height += 20;
+
+    return area.contains(mouse);
+}
+
+void handelSettingEvent(sf::Event& event, PhysicPanel& panel) {
+    if (event.type != sf::Event::MouseButtonPressed)
+        return;
+
+    if (event.mouseButton.button != sf::Mouse::Left)
+        return;
+
+    sf::Vector2f mouse(event.mouseButton.x, event.mouseButton.y);
+
+    if (isMouseOverSetting(panel.gravity, mouse)) {
+        updatePhysicSetting(panel.gravity, mouse.x);
+    }
+
+    else if (isMouseOverSetting(panel.wind, mouse)) {
+        updatePhysicSetting(panel.wind, mouse.x);
+    }
+
+    else if (isMouseOverSetting(panel.weight, mouse)) {
+        updatePhysicSetting(panel.weight, mouse.x);
+    }
+
+    else if (isMouseOverSetting(panel.friction, mouse)) {
+        updatePhysicSetting(panel.friction, mouse.x);
+    }
+
+    else if (isMouseOverSetting(panel.restitution, mouse)) {
+        updatePhysicSetting(panel.restitution, mouse.x);
+    }
+}  
+
 
 void handelEvent(sf::RenderWindow &window, IntroPanel &intro, PhysicPanel &physic){
     sf::Event event;
@@ -180,6 +235,8 @@ void OpenApp(){
         drawPhysicSetting(window, Physical.weight);
         drawPhysicSetting(window, Physical.friction);
         drawPhysicSetting(window, Physical.restitution);
+
+        handelEvent(window, intro, Physical);
 
         window.display();
     }
