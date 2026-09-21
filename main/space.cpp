@@ -118,8 +118,8 @@ void setupPhysicPanel(PhysicPanel& panel, sf::Font& font){
 
     setupPhysicSetting(panel.wind, font, "wind", -30, 30, 0, postion);
     postion.y += bar_gap;
-
-    setupPhysicSetting(panel.weight, font, "weight", 0, 1000, 20, postion);
+    
+    setupPhysicSetting(panel.weight, font, "weight", 0.1f, 1000.f, 20.f, postion);
     postion.y += bar_gap;
 
     setupPhysicSetting(panel.friction, font, "friction", 0, 1, 0.3, postion);
@@ -247,13 +247,17 @@ void physicLogic(PhysicPanel &physic, environment &env){
     env.set_gravity(physic.gravity.value);
     env.set_friction(physic.friction.value);
 
+    if (env.el.weight <= 0.f)
+        return;
+
     sf::Vector2f gf = gravityForce(env);
     sf::Vector2f wf = WindForce(env);
     sf::Vector2f totalForce = gf + wf;
     sf::Vector2f acceleration = totalForce / env.el.weight;
 
    env.el.velocity += acceleration * dt;
-   env.el.setPostion(env.el.velocity * dt);
+   sf::Vector2f new_pos = env.el.position + env.el.velocity * dt;
+   env.el.setPostion(new_pos);
 }
 
 void OpenApp(){
@@ -280,6 +284,7 @@ void OpenApp(){
         window.draw(intro.restartText);
 
         window.draw(Physical.title);
+        window.draw(env.el.sprite);
         drawPhysicSetting(window, Physical.gravity);
         drawPhysicSetting(window, Physical.wind);
         drawPhysicSetting(window, Physical.weight);
@@ -288,8 +293,11 @@ void OpenApp(){
 
         handelEvent(window, intro, Physical);
 
-       
+        physicLogic(Physical, env);
+        checkFloorCollision(env.el, 730);
+        applyFriction(env);
 
+        std::cout << "env.el: (" << env.el.position.x << ", " << env.el.position.y << ")\n";
         window.display();
     }
     
