@@ -129,14 +129,20 @@ void setupPhysicPanel(PhysicPanel& panel, sf::Font& font){
 
 }
 
+bool paused = false;
+bool resart = false;
+
 void handlIntroEvent(sf::Event &event, IntroPanel &intro){
     if(event.type == sf::Event::MouseButtonPressed){
         sf::Vector2f mouse(event.mouseButton.x, event.mouseButton.y);
         if(intro.restartButton.getGlobalBounds().contains(mouse)){
             std::cout <<"restart pressed";
+            paused = false;
+            resart = true;
         }
         if(intro.pauseButton.getGlobalBounds().contains(mouse)){
             std::cout <<"pause pressed";
+            paused = !paused;
         }
     }
 }
@@ -293,9 +299,16 @@ void OpenApp(){
 
         handelEvent(window, intro, Physical);
 
-        physicLogic(Physical, env);
-        checkFloorCollision(env.el, 730);
-        applyFriction(env);
+        if(!paused){
+            physicLogic(Physical, env);
+            checkFloorCollision(env.el, 710);
+            applyFriction(env);
+        }
+
+        if(resart){
+            env.el.setPostion(sf::Vector2f(300.f, 100.f));       
+            resart = false; 
+        }
 
         std::cout << "env.el: (" << env.el.position.x << ", " << env.el.position.y << ")\n";
         window.display();
