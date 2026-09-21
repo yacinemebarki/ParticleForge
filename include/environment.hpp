@@ -15,6 +15,5 @@ class environment{
     void set_wind(float wind);
     void set_friction(float friction);
 
-    void applyGravity(element el);
     void applyWind(element el);
 };

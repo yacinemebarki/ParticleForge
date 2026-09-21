@@ -211,14 +211,49 @@ void handelEvent(sf::RenderWindow &window, IntroPanel &intro, PhysicPanel &physi
     }
 }
 
-void physicLogic(IntroPanel &intro, PhysicPanel &physic, environment &env){
+float dt = 0.016f;
+
+sf::Vector2f gravityForce(environment &env){
+    float force = env.gravity * env.el.weight;
+    return sf::Vector2f(0, force);
+}
+
+sf::Vector2f WindForce(environment &env){
+    return sf::Vector2f(env.wind, 0);
+}
+
+void applyFriction(environment &env){
+    float amount = env.friction * dt;
+
+    if (env.el.velocity.x > 0.f) {
+        env.el.velocity.x = std::max(0.f, env.el.velocity.x - amount);
+    }
+    else if(env.el.velocity.x < 0.f){
+        env.el.velocity.x = std::min(0.f, env.el.velocity.x + amount);
+    }
+}
+
+void checkFloorCollision(element& el, float floorY){
+    if (el.position.y >= floorY) {
+        el.position.y = floorY;
+        el.velocity.y = -el.velocity.y * el.restitution;
+    }
+}
+
+void physicLogic(PhysicPanel &physic, environment &env){
     env.el.set_restitution(physic.restitution.value);
     env.el.set_weight(physic.weight.value);
     env.set_wind(physic.wind.value);
     env.set_gravity(physic.gravity.value);
     env.set_friction(physic.friction.value);
 
-    
+    sf::Vector2f gf = gravityForce(env);
+    sf::Vector2f wf = WindForce(env);
+    sf::Vector2f totalForce = gf + wf;
+    sf::Vector2f acceleration = totalForce / env.el.weight;
+
+   env.el.velocity += acceleration * dt;
+   env.el.setPostion(env.el.velocity * dt);
 }
 
 void OpenApp(){
@@ -231,6 +266,9 @@ void OpenApp(){
 
     PhysicPanel Physical;
     setupPhysicPanel(Physical, font);
+
+    element el(2, 0.8, sf::Vector2f(300.f, 100.f), "image/Bird.png");
+    environment env(9.8, 15, 0.5, el);
 
     while (window.isOpen()){
         window.clear();
@@ -249,6 +287,8 @@ void OpenApp(){
         drawPhysicSetting(window, Physical.restitution);
 
         handelEvent(window, intro, Physical);
+
+       
 
         window.display();
     }

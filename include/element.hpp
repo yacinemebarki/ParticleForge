@@ -8,6 +8,7 @@ class element{
     public: sf::Vector2f position;
     public: sf::Texture texture;
     public: sf::Sprite sprite;
+    public: sf::Vector2f velocity;
 
     element(float weight, float restitution, sf::Vector2f position, std::string imagePath);
 

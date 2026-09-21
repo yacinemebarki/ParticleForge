@@ -4,8 +4,8 @@ LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 TARGET = tinyphysics
 
-$(TARGET): main/space.cpp
-	$(CXX) $(CXXFLAGS) main/space.cpp -o $(TARGET) $(LIBS)
+$(TARGET): main/space.cpp src/element.cpp src/environment.cpp
+	$(CXX) $(CXXFLAGS) main/space.cpp src/element.cpp src/environment.cpp -o $(TARGET) $(LIBS) 
 
 run:
 	./tinyphysics	

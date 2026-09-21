@@ -1,12 +1,13 @@
 #include <istream>
-#include "element.hpp"
+#include "../include/element.hpp"
 #include <SFML/Graphics.hpp>
 
-element::element(float weight, float restitution, sf::Vector2f postion, std::string imagePath){
+element::element(float weight, float restitution, sf::Vector2f position, std::string imagePath){
     this->weight = weight;
     this->restitution = restitution;
     this->position = position;
     
+    velocity = sf::Vector2f(0.f, 0.f);
 
     texture.loadFromFile(imagePath);
     sprite.setTexture(texture);
@@ -21,8 +22,9 @@ void element::set_weight(float weight){
     this->weight = weight;
 }
 
-void element::setPostion(sf::Vector2f postion){
+void element::setPostion(sf::Vector2f position){
     this->position = position;
+    sprite.setPosition(position);
 }
 
 

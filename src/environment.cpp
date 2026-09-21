@@ -1,6 +1,6 @@
 #include <iostream>
-#include "environment.hpp"
-#include "element.hpp"
+#include "../include/environment.hpp"
+#include "../include/element.hpp"
 
 
 environment::environment(float gravity, float wind, float friction, element el)
