@@ -3,16 +3,19 @@
 #include <string>
 #include "../include/element.hpp"
 #include "../include/environment.hpp"
+#include <thread>
 
 std::string background_image = "../../image/backgroudn.avif";
 
-void setupText(sf::Text& text, sf::Font& font, const std::string& content,sf::Color color){
+void setupText(sf::Text &text, sf::Font &font, const std::string &content, sf::Color color)
+{
     text.setFont(font);
     text.setString(content);
     text.setFillColor(color);
 }
 
-struct IntroPanel{
+struct IntroPanel
+{
     sf::RectangleShape restartButton;
     sf::RectangleShape pauseButton;
     sf::Text title;
@@ -20,7 +23,8 @@ struct IntroPanel{
     sf::Text pauseText;
 };
 
-void setupIntroPanel(IntroPanel& panel, sf::Font &font){
+void setupIntroPanel(IntroPanel &panel, sf::Font &font)
+{
     const float panelY = 30.f;
     const float buttonWidth = 100.f;
     const float buttonHeight = 30.f;
@@ -32,7 +36,6 @@ void setupIntroPanel(IntroPanel& panel, sf::Font &font){
     panel.title.setCharacterSize(24);
     panel.title.setPosition(20.f, panelY);
 
-
     // Restart button
     panel.restartButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
     panel.restartButton.setFillColor(sf::Color::Blue);
@@ -42,7 +45,6 @@ void setupIntroPanel(IntroPanel& panel, sf::Font &font){
 
     panel.restartText.setCharacterSize(14);
     panel.restartText.setPosition(870.f, panelY + 6.f);
-
 
     // Pause button
     panel.pauseButton.setSize(sf::Vector2f(buttonWidth, buttonHeight));
@@ -56,7 +58,8 @@ void setupIntroPanel(IntroPanel& panel, sf::Font &font){
     panel.pauseText.setPosition(990.f, panelY + 6.f);
 }
 
-struct PhysicSetting{
+struct PhysicSetting
+{
     sf::Text label;
     sf::RectangleShape bar;
     sf::CircleShape knob;
@@ -65,7 +68,8 @@ struct PhysicSetting{
     float value;
 };
 
-struct PhysicPanel{
+struct PhysicPanel
+{
     sf::Text title;
     PhysicSetting gravity;
     PhysicSetting wind;
@@ -74,7 +78,8 @@ struct PhysicPanel{
     PhysicSetting friction;
 };
 
-void setupPhysicSetting(PhysicSetting& setting, sf::Font& font, std::string label, float min_value, float max_value, float value,sf::Vector2f postion){
+void setupPhysicSetting(PhysicSetting &setting, sf::Font &font, std::string label, float min_value, float max_value, float value, sf::Vector2f postion)
+{
     setting.min_value = min_value;
     setting.max_value = max_value;
     setting.value = value;
@@ -88,26 +93,27 @@ void setupPhysicSetting(PhysicSetting& setting, sf::Font& font, std::string labe
     float ration = (value - min_value) / (max_value - min_value);
     setting.knob.setPosition(postion.x + ration * 250 - 8, postion.y - 5);
 
-    setupText(setting.label, font, label, sf::Color:: White);
+    setupText(setting.label, font, label, sf::Color::White);
     setting.label.setCharacterSize(16);
     setting.label.setPosition(postion.x, postion.y - 30);
-
 }
 
-void drawPhysicSetting(sf::RenderWindow& window, const PhysicSetting& setting){
+void drawPhysicSetting(sf::RenderWindow &window, const PhysicSetting &setting)
+{
     window.draw(setting.label);
     window.draw(setting.bar);
     window.draw(setting.knob);
 }
 
-void setupPhysicPanel(PhysicPanel& panel, sf::Font& font){
+void setupPhysicPanel(PhysicPanel &panel, sf::Font &font)
+{
     const float min_Panel_x = 850;
     const float min_Panel_y = 80;
     const float bar_gap = 40;
     const float bar_x = 900;
     float current_y = 120;
 
-    //title
+    // title
     setupText(panel.title, font, "physic settings", sf::Color::Red);
     panel.title.setPosition(min_Panel_x, min_Panel_y);
     current_y += bar_gap;
@@ -118,7 +124,7 @@ void setupPhysicPanel(PhysicPanel& panel, sf::Font& font){
 
     setupPhysicSetting(panel.wind, font, "wind", -30, 30, 0, postion);
     postion.y += bar_gap;
-    
+
     setupPhysicSetting(panel.weight, font, "weight", 0.1f, 1000.f, 20.f, postion);
     postion.y += bar_gap;
 
@@ -126,46 +132,53 @@ void setupPhysicPanel(PhysicPanel& panel, sf::Font& font){
     postion.y += bar_gap;
 
     setupPhysicSetting(panel.restitution, font, "restitution", 0, 1, 0.7, postion);
-
 }
 
 bool paused = false;
 bool resart = false;
 
-void handlIntroEvent(sf::Event &event, IntroPanel &intro){
-    if(event.type == sf::Event::MouseButtonPressed){
+void handlIntroEvent(sf::Event &event, IntroPanel &intro)
+{
+    if (event.type == sf::Event::MouseButtonPressed)
+    {
         sf::Vector2f mouse(event.mouseButton.x, event.mouseButton.y);
-        if(intro.restartButton.getGlobalBounds().contains(mouse)){
-            std::cout <<"restart pressed";
+        if (intro.restartButton.getGlobalBounds().contains(mouse))
+        {
+            std::cout << "restart pressed";
             paused = false;
             resart = true;
         }
-        if(intro.pauseButton.getGlobalBounds().contains(mouse)){
-            std::cout <<"pause pressed";
+        if (intro.pauseButton.getGlobalBounds().contains(mouse))
+        {
+            std::cout << "pause pressed";
             paused = !paused;
         }
     }
 }
 
-void updatePhysicSetting(PhysicSetting &setting, float mouseX){
+void updatePhysicSetting(PhysicSetting &setting, float mouseX)
+{
     float barx = setting.bar.getPosition().x;
     float barWidth = setting.bar.getSize().x;
 
     float ratio = (mouseX - barx) / barWidth;
-    if(ratio < 0){
+    if (ratio < 0)
+    {
         ratio = 0;
     }
-    else if(ratio > 1){
+    else if (ratio > 1)
+    {
         ratio = 1;
     }
 
     setting.value = setting.min_value + ratio * (setting.max_value - setting.min_value);
-    std::cout <<setting.value;
+    std::cout << setting.value;
 
-    setting.knob.setPosition(barx + ratio * barWidth -setting.knob.getRadius(), setting.bar.getPosition().y - 5);
+    setting.knob.setPosition(barx + ratio * barWidth - setting.knob.getRadius(), setting.bar.getPosition().y - 5);
 }
 
-bool isMouseOverSetting(PhysicSetting &setting, sf::Vector2f mouse){
+bool isMouseOverSetting(PhysicSetting &setting, sf::Vector2f mouse)
+{
     sf::FloatRect area = setting.bar.getGlobalBounds();
 
     area.top -= 10;
@@ -174,7 +187,8 @@ bool isMouseOverSetting(PhysicSetting &setting, sf::Vector2f mouse){
     return area.contains(mouse);
 }
 
-void handelSettingEvent(sf::Event& event, PhysicPanel& panel) {
+void handelSettingEvent(sf::Event &event, PhysicPanel &panel)
+{
     if (event.type != sf::Event::MouseButtonPressed)
         return;
 
@@ -183,33 +197,40 @@ void handelSettingEvent(sf::Event& event, PhysicPanel& panel) {
 
     sf::Vector2f mouse(event.mouseButton.x, event.mouseButton.y);
 
-    if (isMouseOverSetting(panel.gravity, mouse)) {
+    if (isMouseOverSetting(panel.gravity, mouse))
+    {
         updatePhysicSetting(panel.gravity, mouse.x);
     }
 
-    else if (isMouseOverSetting(panel.wind, mouse)) {
+    else if (isMouseOverSetting(panel.wind, mouse))
+    {
         updatePhysicSetting(panel.wind, mouse.x);
     }
 
-    else if (isMouseOverSetting(panel.weight, mouse)) {
+    else if (isMouseOverSetting(panel.weight, mouse))
+    {
         updatePhysicSetting(panel.weight, mouse.x);
     }
 
-    else if (isMouseOverSetting(panel.friction, mouse)) {
+    else if (isMouseOverSetting(panel.friction, mouse))
+    {
         updatePhysicSetting(panel.friction, mouse.x);
     }
 
-    else if (isMouseOverSetting(panel.restitution, mouse)) {
+    else if (isMouseOverSetting(panel.restitution, mouse))
+    {
         updatePhysicSetting(panel.restitution, mouse.x);
     }
-}  
+}
 
-
-void handelEvent(sf::RenderWindow &window, IntroPanel &intro, PhysicPanel &physic){
+void handelEvent(sf::RenderWindow &window, IntroPanel &intro, PhysicPanel &physic)
+{
     sf::Event event;
 
-    while(window.pollEvent(event)){
-        if(event.type == sf::Event::Closed){
+    while (window.pollEvent(event))
+    {
+        if (event.type == sf::Event::Closed)
+        {
             window.close();
         }
         handlIntroEvent(event, intro);
@@ -219,54 +240,67 @@ void handelEvent(sf::RenderWindow &window, IntroPanel &intro, PhysicPanel &physi
 
 float dt = 0.016f;
 
-sf::Vector2f gravityForce(environment &env){
-    float force = env.gravity * env.el.weight;
+sf::Vector2f gravityForce(element &el, environment &env)
+{
+    float force = env.gravity * el.weight;
     return sf::Vector2f(0, force);
 }
 
-sf::Vector2f WindForce(environment &env){
+sf::Vector2f WindForce(environment &env)
+{
     return sf::Vector2f(env.wind, 0);
 }
 
-void applyFriction(environment &env){
+void applyFriction(element &el, environment &env)
+{
     float amount = env.friction * dt;
 
-    if (env.el.velocity.x > 0.f) {
-        env.el.velocity.x = std::max(0.f, env.el.velocity.x - amount);
+    if (el.velocity.x > 0.f)
+    {
+        el.velocity.x = std::max(0.f, el.velocity.x - amount);
     }
-    else if(env.el.velocity.x < 0.f){
-        env.el.velocity.x = std::min(0.f, env.el.velocity.x + amount);
+    else if (el.velocity.x < 0.f)
+    {
+        el.velocity.x = std::min(0.f, el.velocity.x + amount);
     }
 }
 
-void checkFloorCollision(element& el, float floorY){
-    if (el.position.y >= floorY) {
+void checkFloorCollision(element &el, float floorY)
+{
+    if (el.position.y >= floorY)
+    {
         el.position.y = floorY;
         el.velocity.y = -el.velocity.y * el.restitution;
     }
 }
 
-void physicLogic(PhysicPanel &physic, environment &env){
-    env.el.set_restitution(physic.restitution.value);
-    env.el.set_weight(physic.weight.value);
+void physicLogic(PhysicPanel &physic, environment &env)
+{
     env.set_wind(physic.wind.value);
     env.set_gravity(physic.gravity.value);
     env.set_friction(physic.friction.value);
 
-    if (env.el.weight <= 0.f)
-        return;
+    for (element &el : env.elements)
+    {
+        el.set_restitution(physic.restitution.value);
+        el.set_weight(physic.weight.value);
 
-    sf::Vector2f gf = gravityForce(env);
-    sf::Vector2f wf = WindForce(env);
-    sf::Vector2f totalForce = gf + wf;
-    sf::Vector2f acceleration = totalForce / env.el.weight;
+        if (el.weight <= 0.f)
+            continue;
 
-   env.el.velocity += acceleration * dt;
-   sf::Vector2f new_pos = env.el.position + env.el.velocity * dt;
-   env.el.setPostion(new_pos);
+        sf::Vector2f gf = gravityForce(el, env);
+        sf::Vector2f wf = WindForce(env);
+        sf::Vector2f totalForce = gf + wf;
+        sf::Vector2f acceleration = totalForce / el.weight;
+
+        el.velocity += acceleration * dt;
+        sf::Vector2f new_pos = el.position + el.velocity * dt;
+        el.setPostion(new_pos);
+    }
 }
 
-void OpenApp(){
+void OpenApp()
+{
     sf::RenderWindow window(sf::VideoMode(1280, 730), "tiny_physic");
 
     IntroPanel intro;
@@ -278,9 +312,11 @@ void OpenApp(){
     setupPhysicPanel(Physical, font);
 
     element el(2, 0.8, sf::Vector2f(300.f, 100.f), "image/Bird.png");
-    environment env(9.8, 15, 0.5, el);
+    environment env(9.8, 15, 0.5);
+    env.addElement(el);
 
-    while (window.isOpen()){
+    while (window.isOpen())
+    {
         window.clear();
 
         window.draw(intro.title);
@@ -290,7 +326,8 @@ void OpenApp(){
         window.draw(intro.restartText);
 
         window.draw(Physical.title);
-        window.draw(env.el.sprite);
+        for (element &el : env.elements)
+            window.draw(el.sprite);
         drawPhysicSetting(window, Physical.gravity);
         drawPhysicSetting(window, Physical.wind);
         drawPhysicSetting(window, Physical.weight);
@@ -299,25 +336,30 @@ void OpenApp(){
 
         handelEvent(window, intro, Physical);
 
-        if(!paused){
+        if (!paused)
+        {
             physicLogic(Physical, env);
-            checkFloorCollision(env.el, 710);
-            applyFriction(env);
+            for (element &el : env.elements)
+            {
+                checkFloorCollision(el, 710);
+                applyFriction(el, env);
+            }
         }
 
-        if(resart){
-            env.el.setPostion(sf::Vector2f(300.f, 100.f));       
-            resart = false; 
+        if (resart)
+        {
+            for (element &el : env.elements)
+                el.setPostion(sf::Vector2f(300.f, 100.f));
+            resart = false;
         }
 
-        std::cout << "env.el: (" << env.el.position.x << ", " << env.el.position.y << ")\n";
+        for (const element &el : env.elements)
+            std::cout << "env.el: (" << el.position.x << ", " << el.position.y << ")\n";
         window.display();
     }
-    
-    
 }
 
-int main(){
+int main()
+{
     OpenApp();
 }
-

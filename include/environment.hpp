@@ -7,13 +7,14 @@ class environment{
     public: float gravity;
     public: float wind;
     public: float friction;
-    public: element el;
+    std::vector<element> elements;
 
-    environment(float gravity, float wind, float friction, element el);
+    environment(float gravity, float wind, float friction);
 
     void set_gravity(float gravity);
     void set_wind(float wind);
     void set_friction(float friction);
 
     void applyWind(element el);
+    void addElement(element ele);
 };

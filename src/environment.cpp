@@ -1,10 +1,11 @@
 #include <iostream>
 #include "../include/environment.hpp"
 #include "../include/element.hpp"
+#include "vector"
 
 
-environment::environment(float gravity, float wind, float friction, element el)
-    : gravity(gravity), wind(wind), friction(friction), el(el){
+environment::environment(float gravity, float wind, float friction)
+    : gravity(gravity), wind(wind), friction(friction){
 }
 
 void environment::set_gravity(float gravity){
@@ -19,4 +20,7 @@ void environment::set_friction(float friction){
     this->friction = friction;
 }
 
+void environment::addElement(element ele){
+    this->elements.emplace_back(ele);
+}
 
