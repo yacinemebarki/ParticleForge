@@ -4,6 +4,7 @@
 #include "../include/element.hpp"
 #include "../include/environment.hpp"
 #include <thread>
+#include <mutex>
 
 std::string background_image = "../../image/backgroudn.avif";
 
@@ -136,6 +137,8 @@ void setupPhysicPanel(PhysicPanel &panel, sf::Font &font)
 
 bool paused = false;
 bool resart = false;
+bool running = true;
+std::mutex physicsMutex;
 
 void handlIntroEvent(sf::Event &event, IntroPanel &intro)
 {
@@ -299,6 +302,24 @@ void physicLogic(PhysicPanel &physic, environment &env)
     }
 }
 
+void applyForces(PhysicPanel &Physical,environment &env){
+    std::cout<<"enter";
+    while(running){
+        if(!paused){
+            std::lock_guard<std::mutex> lock(physicsMutex);
+            physicLogic(Physical, env);
+            for (element &el : env.elements)
+            {
+                checkFloorCollision(el, 710);
+                applyFriction(el, env);
+            }           
+       }
+       std::this_thread::sleep_for(std::chrono::milliseconds(16));
+        
+    }
+    
+}
+
 void OpenApp()
 {
     sf::RenderWindow window(sf::VideoMode(1280, 730), "tiny_physic");
@@ -314,6 +335,10 @@ void OpenApp()
     element el(2, 0.8, sf::Vector2f(300.f, 100.f), "image/Bird.png");
     environment env(9.8, 15, 0.5);
     env.addElement(el);
+
+    std::thread Force([&] () {
+        applyForces(Physical, env);
+    });
 
     while (window.isOpen())
     {
@@ -336,15 +361,6 @@ void OpenApp()
 
         handelEvent(window, intro, Physical);
 
-        if (!paused)
-        {
-            physicLogic(Physical, env);
-            for (element &el : env.elements)
-            {
-                checkFloorCollision(el, 710);
-                applyFriction(el, env);
-            }
-        }
 
         if (resart)
         {
@@ -357,6 +373,8 @@ void OpenApp()
             std::cout << "env.el: (" << el.position.x << ", " << el.position.y << ")\n";
         window.display();
     }
+    running = false;
+    Force.join();
 }
 
 int main()
