@@ -5,6 +5,9 @@
 #include "../include/environment.hpp"
 #include <thread>
 #include <mutex>
+#include <vector>
+#include <random>
+#include <algorithm>
 
 std::string background_image = "../../image/backgroudn.avif";
 
@@ -321,6 +324,55 @@ void applyForces(PhysicPanel &Physical,environment &env){
     
 }
 
+sf::Color randomColor(){
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+
+    static std::uniform_int_distribution<int> dis(0, 255);
+
+    return sf::Color(dis(gen), dis(gen), dis(gen));
+}
+
+bool sameColor(sf::Color a, sf::Color b){
+    return a.r == b.r && a.g == b.g && a.b == b.b && a.a == b.a;
+}
+
+bool existColor(sf::Color a, const std::vector<sf::Color> &colors){
+    return std::any_of(
+        colors.begin(),
+        colors.end(),
+        [&](const sf::Color exist)
+        {
+            return sameColor(exist, a);
+        }
+    );
+}
+
+void generateElements(environment &env, int number){
+
+    std::mt19937 rng(std::random_device{}());
+    std::uniform_real_distribution<float> xDist(30.f, 790.f);
+    std::uniform_real_distribution<float> yDist(120.f, 650.f);
+    std::uniform_real_distribution<float> weightDist(0.1f, 100.f);
+    std::uniform_real_distribution<float> resDist(0.f, 1.f);
+
+    std::vector<sf::Color> colors;
+
+    for(int i = 0; i < number; i++){
+        sf::Color  c = randomColor();
+        while(existColor(c, colors)){
+            c = randomColor();
+        }
+        colors.push_back(c);
+        float x = xDist(rng);
+        float y = yDist(rng);
+        float weight = weightDist(rng);
+        float res = resDist(rng);
+
+        env.elements.emplace_back(weight, res,sf::Vector2f(x, y), c);
+    }
+}
+
 void OpenApp()
 {
     sf::RenderWindow window(sf::VideoMode(1280, 730), "tiny_physic");
@@ -333,13 +385,14 @@ void OpenApp()
     PhysicPanel Physical;
     setupPhysicPanel(Physical, font);
 
-    element el(2, 0.8, sf::Vector2f(300.f, 100.f), sf::Color(80, 190, 255));
     environment env(9.8, 15, 0.5);
-    env.addElement(el);
+
+    generateElements(env, 5);
 
     std::thread Force([&] () {
         applyForces(Physical, env);
     });
+
 
     while (window.isOpen())
     {
