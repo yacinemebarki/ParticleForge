@@ -16,6 +16,7 @@ The project simulates a physical element affected by different environmental par
 - Collision with the floor
 - Pause and restart controls
 - Real-time visualization using SFML
+- Elements rendered as colored circles
 
 ## Technologies
 
@@ -38,7 +39,7 @@ It provides:
 
 - Window management
 - 2D rendering
-- Sprites and textures
+- Shapes and colors
 - Text rendering
 - Mouse and keyboard events
 - Graphics primitives
@@ -53,8 +54,6 @@ The Makefile compiles the C++ source files and links the required SFML libraries
 ```
 ParticleForge/
 ├── image/
-│   └── Bird.png
-│
 ├── include/
 │   ├── element.hpp
 │   └── environment.hpp

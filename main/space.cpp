@@ -270,9 +270,10 @@ void applyFriction(element &el, environment &env)
 
 void checkFloorCollision(element &el, float floorY)
 {
-    if (el.position.y >= floorY)
+    float diameter = el.shape.getRadius() * 2.f;
+    if (el.position.y + diameter >= floorY)
     {
-        el.position.y = floorY;
+        el.position.y = floorY - diameter;
         el.velocity.y = -el.velocity.y * el.restitution;
     }
 }
@@ -332,7 +333,7 @@ void OpenApp()
     PhysicPanel Physical;
     setupPhysicPanel(Physical, font);
 
-    element el(2, 0.8, sf::Vector2f(300.f, 100.f), "image/Bird.png");
+    element el(2, 0.8, sf::Vector2f(300.f, 100.f), sf::Color(80, 190, 255));
     environment env(9.8, 15, 0.5);
     env.addElement(el);
 
@@ -352,7 +353,7 @@ void OpenApp()
 
         window.draw(Physical.title);
         for (element &el : env.elements)
-            window.draw(el.sprite);
+            window.draw(el.shape);
         drawPhysicSetting(window, Physical.gravity);
         drawPhysicSetting(window, Physical.wind);
         drawPhysicSetting(window, Physical.weight);
