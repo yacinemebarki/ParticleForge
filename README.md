@@ -2,14 +2,13 @@
 
 ParticleForge is a small 2D physics simulation built with **C++ and SFML**.
 
-The project simulates a physical element affected by different environmental parameters such as **gravity, wind, friction, weight, and restitution**. The goal is to build a simple physics engine from scratch and later use the project as a foundation for experimenting with **parallel programming and GPU acceleration**.
+The project simulates physical elements affected by environmental parameters such as **gravity, wind, friction, and restitution**. Each element has its own weight, which is assigned when it is created. The goal is to build a simple physics engine from scratch and later use the project as a foundation for experimenting with **parallel programming and GPU acceleration**.
 
 ## Features
 
 - 2D object physics simulation
 - Gravity control
 - Wind control
-- Object weight control
 - Friction control
 - Restitution control
 - Interactive sliders for physics parameters
@@ -106,7 +105,12 @@ ParticleForge provides an interactive control panel where the simulation paramet
 
 Available parameters:
 
-ParameterDescriptionGravityControls downward accelerationWindControls horizontal forceWeightControls the object's massFrictionReduces horizontal velocityRestitutionControls the bounce after collision
+| Parameter | Description |
+| --- | --- |
+| Gravity | Controls downward acceleration |
+| Wind | Controls horizontal force |
+| Friction | Reduces horizontal velocity |
+| Restitution | Controls the bounce after collision |
 ## Build and Run
 
 ### Requirements

@@ -8,6 +8,7 @@
 #include <vector>
 #include <random>
 #include <algorithm>
+#include <omp.h>
 
 std::string background_image = "../../image/backgroudn.avif";
 
@@ -77,7 +78,6 @@ struct PhysicPanel
     sf::Text title;
     PhysicSetting gravity;
     PhysicSetting wind;
-    PhysicSetting weight;
     PhysicSetting restitution;
     PhysicSetting friction;
 };
@@ -127,9 +127,6 @@ void setupPhysicPanel(PhysicPanel &panel, sf::Font &font)
     postion.y += bar_gap;
 
     setupPhysicSetting(panel.wind, font, "wind", -30, 30, 0, postion);
-    postion.y += bar_gap;
-
-    setupPhysicSetting(panel.weight, font, "weight", 0.1f, 1000.f, 20.f, postion);
     postion.y += bar_gap;
 
     setupPhysicSetting(panel.friction, font, "friction", 0, 1, 0.3, postion);
@@ -213,11 +210,6 @@ void handelSettingEvent(sf::Event &event, PhysicPanel &panel)
         updatePhysicSetting(panel.wind, mouse.x);
     }
 
-    else if (isMouseOverSetting(panel.weight, mouse))
-    {
-        updatePhysicSetting(panel.weight, mouse.x);
-    }
-
     else if (isMouseOverSetting(panel.friction, mouse))
     {
         updatePhysicSetting(panel.friction, mouse.x);
@@ -287,10 +279,11 @@ void physicLogic(PhysicPanel &physic, environment &env)
     env.set_gravity(physic.gravity.value);
     env.set_friction(physic.friction.value);
 
-    for (element &el : env.elements)
+    #pragma omp parallel for
+    for (int i = 0; i < static_cast<int>(env.elements.size()); i++)
     {
+        element &el = env.elements[i];
         el.set_restitution(physic.restitution.value);
-        el.set_weight(physic.weight.value);
 
         if (el.weight <= 0.f)
             continue;
@@ -409,7 +402,6 @@ void OpenApp()
             window.draw(el.shape);
         drawPhysicSetting(window, Physical.gravity);
         drawPhysicSetting(window, Physical.wind);
-        drawPhysicSetting(window, Physical.weight);
         drawPhysicSetting(window, Physical.friction);
         drawPhysicSetting(window, Physical.restitution);
 
