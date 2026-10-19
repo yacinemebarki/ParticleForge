@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++17
+CXXFLAGS = -Wall -Wextra -std=c++17 -fopenmp
 LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 TARGET = tinyphysics

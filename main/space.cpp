@@ -278,7 +278,7 @@ void physicLogic(PhysicPanel &physic, environment &env)
     env.set_wind(physic.wind.value);
     env.set_gravity(physic.gravity.value);
     env.set_friction(physic.friction.value);
-
+    
     #pragma omp parallel for
     for (int i = 0; i < static_cast<int>(env.elements.size()); i++)
     {
@@ -380,7 +380,7 @@ void OpenApp()
 
     environment env(9.8, 15, 0.5);
 
-    generateElements(env, 5);
+    generateElements(env, 1000);
 
     std::thread Force([&] () {
         applyForces(Physical, env);
