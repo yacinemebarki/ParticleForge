@@ -282,6 +282,10 @@ void physicLogic(PhysicPanel &physic, environment &env)
     #pragma omp parallel for
     for (int i = 0; i < static_cast<int>(env.elements.size()); i++)
     {
+        #pragma omp critical
+        {
+            std::cout << "Thread ID: "<< omp_get_thread_num() << '\n';
+        }
         element &el = env.elements[i];
         el.set_restitution(physic.restitution.value);
 
@@ -415,8 +419,7 @@ void OpenApp()
             resart = false;
         }
 
-        for (const element &el : env.elements)
-            std::cout << "env.el: (" << el.position.x << ", " << el.position.y << ")\n";
+        
         window.display();
     }
     running = false;
