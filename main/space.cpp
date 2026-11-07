@@ -285,6 +285,7 @@ void physicLogic(PhysicPanel &physic, environment &env)
         #pragma omp critical
         {
             std::cout << "Thread ID: "<< omp_get_thread_num() << '\n';
+            std::cout <<"Wait Time: "<<omp_get_wtime() << '\n';
         }
         element &el = env.elements[i];
         el.set_restitution(physic.restitution.value);
@@ -321,7 +322,7 @@ void applyForces(PhysicPanel &Physical,environment &env){
     
 }
 
-sf::Color randomColor(){
+static sf::Color randomColor(){
     static std::random_device rd;
     static std::mt19937 gen(rd());
 
@@ -384,7 +385,7 @@ void OpenApp()
 
     environment env(9.8, 15, 0.5);
 
-    generateElements(env, 1000);
+    generateElements(env, 10);
 
     std::thread Force([&] () {
         applyForces(Physical, env);

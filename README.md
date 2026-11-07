@@ -2,7 +2,7 @@
 
 ParticleForge is a small 2D physics simulation built with **C++ and SFML**.
 
-The project simulates physical elements affected by environmental parameters such as **gravity, wind, friction, and restitution**. Each element has its own weight, which is assigned when it is created. The goal is to build a simple physics engine from scratch and later use the project as a foundation for experimenting with **parallel programming and GPU acceleration**.
+The project simulates physical elements affected by environmental parameters such as **gravity, wind, friction, and restitution**. Each element has its own weight, which is assigned when it is created. The simulation already uses **multithreading and parallel programming** to update physics for multiple elements concurrently.
 
 ## Features
 
@@ -16,6 +16,7 @@ The project simulates physical elements affected by environmental parameters suc
 - Pause and restart controls
 - Real-time visualization using SFML
 - Elements rendered as colored circles
+- Multithreaded and parallel physics updates
 
 ## Technologies
 
@@ -43,10 +44,13 @@ It provides:
 - Mouse and keyboard events
 - Graphics primitives
 
+### Threads and parallel programming
+ParticleForge uses C++ `std::thread` to run physics processing separately from the rendering loop. Within the physics update, an **OpenMP parallel loop** processes elements concurrently.
+
 ### Make
 The project uses a **Makefile** to automate compilation.
 
-The Makefile compiles the C++ source files and links the required SFML libraries.
+The Makefile compiles the C++ source files with OpenMP support and links the required SFML libraries.
 
 ## Project Structure
 
@@ -116,7 +120,7 @@ Available parameters:
 ### Requirements
 You need:
 
-- C++ compiler with C++17 support
+- C++ compiler with C++17 and OpenMP support
 - Make
 - SFML
 On Ubuntu/Pop!_OS, SFML can be installed with:
@@ -157,7 +161,7 @@ The project uses a simple Makefile to compile the application:
 ```
 CXX = g++
 
-CXXFLAGS = -Wall -Wextra -std=c++17 -Iinclude
+CXXFLAGS = -Wall -Wextra -std=c++17 -fopenmp
 
 LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
@@ -174,13 +178,8 @@ clean:
 ```
 
 ## Future Development
-ParticleForge is also intended to be a learning project for **parallel programming**.
+Current work uses CPU multithreading and OpenMP parallelism. Future development may explore:
 
-Future versions may explore:
-
-- Multiple simulated objects
-- CPU parallelization
-- Multithreading
 - SIMD/vectorization
 - CUDA/GPU acceleration
 - Parallel collision detection
@@ -191,4 +190,4 @@ The long-term goal is to compare how the same physics workload behaves when exec
 ## Project Goal
 The main goal of ParticleForge is not to create a production-ready physics engine.
 
-It is a hands-on project for learning how a physics simulation works internally and eventually understanding how computationally intensive simulations can be optimized using **parallel programming and GPU computing**. 
+It is a hands-on project for learning how a physics simulation works internally and exploring how computationally intensive simulations can be optimized using **multithreading, parallel programming, and GPU computing**.
