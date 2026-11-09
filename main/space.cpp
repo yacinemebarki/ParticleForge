@@ -263,13 +263,18 @@ void applyFriction(element &el, environment &env)
     }
 }
 
-void checkFloorCollision(element &el, float floorY)
+void checkFloorCollision(element &el, float floorY, float sideX)
 {
     float diameter = el.shape.getRadius() * 2.f;
     if (el.position.y + diameter >= floorY)
     {
         el.position.y = floorY - diameter;
         el.velocity.y = -el.velocity.y * el.restitution;
+    }
+    if(el.position.x + diameter >= sideX)
+    {
+        el.position.x = sideX - diameter;
+        el.velocity.x = -el.velocity.x * el.restitution;
     }
 }
 
@@ -312,7 +317,7 @@ void applyForces(PhysicPanel &Physical,environment &env){
             physicLogic(Physical, env);
             for (element &el : env.elements)
             {
-                checkFloorCollision(el, 710);
+                checkFloorCollision(el, 710, 900);
                 applyFriction(el, env);
             }           
        }
